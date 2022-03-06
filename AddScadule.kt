@@ -1,68 +1,22 @@
-package com.example.mypetdiary
-
-import android.content.Intent
-import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 
-class AddScadule : AppCompatActivity(){
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_scadule)
-
-        var actionBar : ActionBar? = supportActionBar
-        if (actionBar != null) {
-            actionBar.hide()
-        }
-
-     //   var date = arrayOf(0,0m0)
-
-
-
-        var year = 0
-        var month = 0
-        var day = 0
-
-        if(intent.hasExtra("year") && intent.hasExtra("month")&&intent.hasExtra("day")){
-            year = intent.getIntExtra("year", 0)
-            month = intent.getIntExtra("month", 0)
-            day = intent.getIntExtra("day", 0)
-        }
-        var dateView : TextView = findViewById(R.id.dateView)
-        dateView.text = String.format("★%d년 %d월 %d일★",year, month, day)
-
-        lateinit var repeat_scadule : String
-        val repeat_Scadule_spinner : Spinner = findViewById(R.id.spinnerRepeat)
-        repeat_Scadule_spinner.adapter = ArrayAdapter.createFromResource(this,R.array.repeatScadule, android.R.layout.simple_spinner_item)
-
-        repeat_Scadule_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                when(position){
-                    0 -> repeat_scadule = "없음"
-                    1 -> repeat_scadule = "매일"
-                    2 -> repeat_scadule = "매주"
-                    3 -> repeat_scadule = "매달"
-                }
-            }
-        }
-
-    }
+//메뉴 1
+(menu/add_scadule_menu.xml) 
+<menu>
+    <item
+        android:id="@+id/ok"
+        android:checkable="false"
+        android:icon="@drawable/paw_5892565_1280"
+        android:title="확인"
+        android:visible="true"
+        app:showAsAction="always"></item>
+    <item
+        android:id="@+id/cancel"
+        android:title="취소"
+        android:icon="@drawable/paw_5892565_1280"
+        app:showAsAction="always"></item>
+    </menu>
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.add_scadule_menu, menu)
@@ -77,15 +31,63 @@ class AddScadule : AppCompatActivity(){
                 startActivity(intentBack)
             }
             R.id.ok->{
+                addScadule()
                 val intentBack = Intent(this, MainActivity::class.java)
                 startActivity(intentBack)
             }
         }
         return super.onOptionsItemSelected(item)
+    } 
+    
+//메뉴2
+(menu/main_menu.xml)
+<menu>
+    <item
+        android:id="@+id/scaduale_management"
+        android:title="일정관리"
+        android:icon="@drawable/paw_5892565_1280"
+        app:showAsAction="always">
+    </item>
+    <item
+        android:id="@+id/diary"
+        android:title="한줄일기"
+        android:icon="@drawable/paw_5892565_1280"
+        app:showAsAction="always"></item>
+    <item
+        android:id="@+id/pet_page"
+        android:title="펫페이지"
+        android:icon="@drawable/paw_5892565_1280"
+        app:showAsAction="always"
+        ></item>
+</menu>
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu)
+        return true
+    }
+    
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        var showCalender : ImageButton = findViewById(R.id.calender_btn)
+        val transaction = supportFragmentManager.beginTransaction()
+        showCalender.visibility = View.VISIBLE
+        when(item.itemId){
+            R.id.scaduale_management -> {
+                transaction.replace(R.id.mainfragment, MainPost())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+            R.id.diary->{
+                transaction.replace(R.id.mainfragment, Diary())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+            R.id.pet_page-> {
+                showCalender.visibility = View.GONE //pet_page 누를때만 
+                transaction.replace(R.id.mainfragment, PetPage())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
+        }
+        return super.onOptionsItemSelected(item)
 
     }
-    fun addScadule(){
-
-    }
-
-}
